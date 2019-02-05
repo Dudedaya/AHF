@@ -59,4 +59,12 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_gravity="end|bottom"
+        android:onClick="onClickDone"/>
+
 </android.support.design.widget.CoordinatorLayout>
