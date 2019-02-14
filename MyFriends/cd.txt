@@ -1,0 +1,4 @@
+https://pnixx.ru/blog/Android_i_vkontakte_chast_2_(avtorizatsiya_i_poluchenie_prav)-6.html
+
+https://vk.com/dev/access_token
+https://vk.com/dev/implicit_flow_user
