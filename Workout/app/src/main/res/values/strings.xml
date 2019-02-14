@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Workout</string>
+    <string name="details_button">Show Details</string>
+    <string name="workout_title">Workout Title</string>
+    <string name="workout_description">Workout description</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="reset">Reset</string>
+</resources>
