@@ -2,3 +2,7 @@ https://pnixx.ru/blog/Android_i_vkontakte_chast_2_(avtorizatsiya_i_poluchenie_pr
 
 https://vk.com/dev/access_token
 https://vk.com/dev/implicit_flow_user
+
+https://www.androidauthority.com/use-remote-web-api-within-android-app-617869/
+
+https://vk.com/dev/api_requests
