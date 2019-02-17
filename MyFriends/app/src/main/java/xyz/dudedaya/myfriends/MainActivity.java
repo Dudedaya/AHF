@@ -108,7 +108,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
 
     @Override
     public void authComplete(String url) {
-        // todo: parce url
+        fragment = new FriendsFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
     }
 
     @Override

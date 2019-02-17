@@ -74,7 +74,7 @@ public class AuthFragment extends Fragment {
                 super.onReceivedError(view, request, error);
             }
         });
-        String authUrl = "https://oauth.vk.com/authorize?client_id=1&display=mobile" +
+        String authUrl = "https://oauth.vk.com/authorize?client_id=6864969&display=mobile" +
                 "&redirect_uri=https://oauth.vk.com/blank.html&scope=friends&response_type=token&v=5.92&state=123456";
         webView.loadUrl(authUrl);
 
