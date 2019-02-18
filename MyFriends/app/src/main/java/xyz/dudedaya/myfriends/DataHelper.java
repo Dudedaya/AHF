@@ -112,7 +112,9 @@ public class DataHelper {
         }
 
         public String getStatus() {
-            return status;
+            if (status != null && !status.equals("") && !status.equals("null")) {
+                return status;
+            } else return null;
         }
 
         private String first_name;

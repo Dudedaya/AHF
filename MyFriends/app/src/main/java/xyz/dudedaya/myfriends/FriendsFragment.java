@@ -23,17 +23,14 @@ public class FriendsFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_friends, container, false);
-        recyclerView = layout.findViewById(R.id.recycler_view);
-        loadDataFromVK();
-        return layout;
+        recyclerView = inflater.inflate(R.layout.fragment_friends, container, false);
+        FriendsRecyclerAdapter friendsRecyclerAdapter = new FriendsRecyclerAdapter()
+        return recyclerView;
     }
 
-    private void loadDataFromVK() {
-
-    }
 
 }
