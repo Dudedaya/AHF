@@ -1,6 +1,7 @@
 package xyz.dudedaya.myfriends;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,18 +17,44 @@ import java.util.regex.Pattern;
 
 public class DataHelper {
 
+    private final String FRIENDS_COUNT = "5";
+
     public interface DataEventListener {
         void dataLoaded();
         void errorLoadingData();
     }
 
-    private String token;
+    public void setListener(DataEventListener listener) {
+        this.listener = listener;
+    }
+
+    public void removeListener(DataEventListener listener) {
+        if (this.listener.equals(listener)) {
+            this.listener = null;
+        }
+    }
+
+    private static String token = "";
     private List<User> users;
     private DataEventListener listener;
+    private static DataHelper instance;
 
-    DataHelper(String token, DataEventListener listener) {
-        this.token = token;
-        this.listener = listener;
+    public static void setToken(String newToken) {
+        token = newToken;
+        Log.d("DataHelper", "Token set to: " + token);
+    }
+
+    public static DataHelper initInstance(String newToken) {
+        if (instance == null && !token.equals(newToken)) {
+            setToken(newToken);
+            instance = new DataHelper();
+            return instance;
+        }
+        else return instance;
+    }
+
+    public static DataHelper getInstance() {
+        return instance;
     }
 
     public void loadData() {
@@ -55,7 +82,7 @@ public class DataHelper {
                 } finally {
                     urlConnection.disconnect();
                 }
-                request = new URL("https://api.vk.com/method/friends.get?fields=nickname,photo_100,status&order=random&count=5&v=5.8&access_token=" + token);
+                request = new URL("https://api.vk.com/method/friends.get?fields=nickname,photo_100,status&order=random&count=" + FRIENDS_COUNT + "&v=5.8&access_token=" + token);
                 urlConnection = (HttpURLConnection) request.openConnection();
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -80,14 +107,15 @@ public class DataHelper {
             if (s == null) {
                 listener.errorLoadingData();
             } else {
-                String testString = "{\"response\":[{\"id\":297428682,\"first_name\":\"Jared\",\"last_name\":\"Leto\",\"nickname\":\"Letovan\",\"photo_100\":\"someurl\"}]} " +
-                        "{\"response\":[{\"id\":210700287,\"first_name\":\"first_name1\",\"last_name\":\"last_name1\"}," +
-                        "{\"id\":210700287,\"first_name\":\"first_name2\",\"last_name\":\"last_name2\"}," +
-                        "{\"id\":210700287,\"first_name\":\"first_name3\",\"last_name\":\"last_name3\"}," +
-                        "{\"id\":210700287,\"first_name\":\"first_name4\",\"last_name\":\"last_name4\"}," +
-                        "{\"id\":210700287,\"first_name\":\"first_name5\",\"last_name\":\"last_name5\"}]}";
+                String testString = "{\"response\":[{\"id\":297428682,\"first_name\":\"Jared\",\"last_name\":\"Leto\",\"nickname\":\"Letovan\",\"photo_100\":\"https:\\/\\/vk.com\\/images\\/camera_100.png?ava=1\"}]} " +
+         "{\"response\":[{\"id\":210700287,\"first_name\":\"Иванэс\",\"last_name\":\"Иванов\",\"nickname\":\"Ванюсик инфант террибль\",\"status\":\"Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова\"}," +
+                        "{\"id\":210700287,\"first_name\":\"Петр\",\"last_name\":\"Петров\",\"nickname\":\"Петян\",\"status\":\"Дай стошку\"}," +
+                        "{\"id\":210700287,\"first_name\":\"Вася\",\"last_name\":\"Васцов\",\"nickname\":\"Василич\",\"status\":\"Мечтаю о былом\"}," +
+                        "{\"id\":210700287,\"first_name\":\"Маша\",\"last_name\":\"Мацова\",\"nickname\":\"Валерьевна\",\"status\":\"Мяу\"}," +
+                        "{\"id\":210700287,\"first_name\":\"Варя\",\"last_name\":\"Перцова\",\"nickname\":\"Житомер\",\"status\":\"Ковыряю в носу\"}]}";
+                Log.d("DataHelper", "JsonResponse: " + s);
                 Pattern pattern = Pattern.compile("(\\{\"id\":[^\\}]*\\})");
-                Matcher matcher = pattern.matcher(testString);
+                Matcher matcher = pattern.matcher(s);
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 users = new ArrayList<>();
@@ -108,7 +136,9 @@ public class DataHelper {
         }
 
         public String getPhoto_100() {
-            return photo_100;
+            if (photo_100 != null && !photo_100.equals("") && !photo_100.equals("null") && !photo_100.equals("https:\\/\\/vk.com\\/images\\/camera_100.png?ava=1")) {
+                return photo_100.replaceAll("\\\\/","/");
+            } else return null;
         }
 
         public String getStatus() {

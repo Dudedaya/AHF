@@ -2,17 +2,27 @@ package xyz.dudedaya.myfriends;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.AuthClickListener, AuthFragment.AuthListener, DataHelper.DataEventListener {
 
@@ -21,6 +31,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
     private MenuItem logoutMenuItem;
     private ProgressBar progressBar;
     private Fragment fragment;
+    private AppBarLayout appBarLayout;
+    private DataHelper dataHelper;
+    private LinearLayout appbarLinearLayout;
+    private ImageView userImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
 
         // Initializing views
         progressBar = findViewById(R.id.progress_bar);
+        appBarLayout = findViewById(R.id.appbar);
+        appbarLinearLayout = findViewById(R.id.appbar_layout);
 
         // Load token data, check it and update UI accordingly
         sharedPreferences = getSharedPreferences("tokenData", Context.MODE_PRIVATE);
@@ -51,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
     private boolean checkToken() {
         long currentTime = System.currentTimeMillis();
         token = sharedPreferences.getString("token", "");
-        Log.d("checkToken",token);
+        Log.d("checkToken", token);
         long expirationDate = sharedPreferences.getLong("expirationDate", currentTime);
         // Return false if we don't have a token or the token is expired
         return (token.length() != 0 && expirationDate >= currentTime);
@@ -75,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
         if (isTokenOk) {
             retrieveData();
         } else {
-            // Set Authorize fragment
+            // Set Login fragment
+            appBarLayout.setExpanded(false, false);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             LoginFragment loginFragment = new LoginFragment();
             fragment = loginFragment;
@@ -102,11 +120,21 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
             public boolean onMenuItemClick(MenuItem item) {
                 resetToken();
                 logoutMenuItem.setVisible(false);
-                setUI(false);
+                logout();
                 return true;
             }
         });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void logout() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        fragment = new LoginFragment();
+        ft.replace(R.id.fragment_container, fragment);
+        ft.commit();
+        appBarLayout.setExpanded(false, true);
+        appbarLinearLayout.setVisibility(View.GONE);
+        dataHelper = null;
     }
 
 
@@ -154,8 +182,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
 
     private void retrieveData() {
         Log.d("retrieveData", "retrieveData");
-        DataHelper dh = new DataHelper(token, this);
-        dh.loadData();
+        dataHelper = DataHelper.initInstance(token);
+        dataHelper.setListener(this);
+        dataHelper.loadData();
     }
 
     private void showErrorSnackbar() {
@@ -199,7 +228,49 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
         ft.replace(R.id.fragment_container, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
+        appBarLayout.setExpanded(true, true);
+        userImage = findViewById(R.id.user_image);
+        DataHelper.User user = dataHelper.getUser();
+        if (user.getPhoto_100() != null) {
+            new RetrievePhotoTask().execute(user.getPhoto_100());
+        }
+        TextView textView = findViewById(R.id.user_name);
+        textView.setText(user.getName());
+        appbarLinearLayout.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    protected void onDestroy() {
+        if (dataHelper != null) {
+            dataHelper.removeListener(this);
+            dataHelper = null;
+        }
+        super.onDestroy();
+    }
 
+    private class RetrievePhotoTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String urlString = urls[0];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    return BitmapFactory.decodeStream(urlConnection.getInputStream());
+                } finally {
+                    urlConnection.disconnect();
+                }
+            } catch (Exception e) {
+                Log.d("MA/RetrievePhotoTask","Error loading photo.");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            userImage.setImageBitmap(bitmap);
+        }
+    }
 }
