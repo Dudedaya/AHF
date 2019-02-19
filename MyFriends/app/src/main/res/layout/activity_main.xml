@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/logout_icon"
+        android:visibility="gone"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|end" />
 
