@@ -1,7 +1,6 @@
 package xyz.dudedaya.myfriends;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,6 +20,7 @@ public class DataHelper {
 
     public interface DataEventListener {
         void dataLoaded();
+
         void errorLoadingData();
     }
 
@@ -41,7 +41,6 @@ public class DataHelper {
 
     public static void setToken(String newToken) {
         token = newToken;
-        Log.d("DataHelper", "Token set to: " + token);
     }
 
     public static DataHelper initInstance(String newToken) {
@@ -49,8 +48,7 @@ public class DataHelper {
             setToken(newToken);
             instance = new DataHelper();
             return instance;
-        }
-        else return instance;
+        } else return instance;
     }
 
     public static DataHelper getInstance() {
@@ -107,13 +105,6 @@ public class DataHelper {
             if (s == null) {
                 listener.errorLoadingData();
             } else {
-                String testString = "{\"response\":[{\"id\":297428682,\"first_name\":\"Jared\",\"last_name\":\"Leto\",\"nickname\":\"Letovan\",\"photo_100\":\"https:\\/\\/vk.com\\/images\\/camera_100.png?ava=1\"}]} " +
-         "{\"response\":[{\"id\":210700287,\"first_name\":\"Иванэс\",\"last_name\":\"Иванов\",\"nickname\":\"Ванюсик инфант террибль\",\"status\":\"Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова Слушаю Егора Летова\"}," +
-                        "{\"id\":210700287,\"first_name\":\"Петр\",\"last_name\":\"Петров\",\"nickname\":\"Петян\",\"status\":\"Дай стошку\"}," +
-                        "{\"id\":210700287,\"first_name\":\"Вася\",\"last_name\":\"Васцов\",\"nickname\":\"Василич\",\"status\":\"Мечтаю о былом\"}," +
-                        "{\"id\":210700287,\"first_name\":\"Маша\",\"last_name\":\"Мацова\",\"nickname\":\"Валерьевна\",\"status\":\"Мяу\"}," +
-                        "{\"id\":210700287,\"first_name\":\"Варя\",\"last_name\":\"Перцова\",\"nickname\":\"Житомер\",\"status\":\"Ковыряю в носу\"}]}";
-                Log.d("DataHelper", "JsonResponse: " + s);
                 Pattern pattern = Pattern.compile("(\\{\"id\":[^\\}]*\\})");
                 Matcher matcher = pattern.matcher(s);
                 GsonBuilder builder = new GsonBuilder();
@@ -137,7 +128,7 @@ public class DataHelper {
 
         public String getPhoto_100() {
             if (photo_100 != null && !photo_100.equals("") && !photo_100.equals("null") && !photo_100.equals("https:\\/\\/vk.com\\/images\\/camera_100.png?ava=1")) {
-                return photo_100.replaceAll("\\\\/","/");
+                return photo_100.replaceAll("\\\\/", "/");
             } else return null;
         }
 
@@ -174,7 +165,7 @@ public class DataHelper {
     }
 
     public List<User> getFriends() {
-        if (users.size() > 1) {
+        if (users != null && users.size() > 1) {
             List<User> friends = users;
             friends.remove(0);
             return friends;

@@ -14,18 +14,12 @@ import java.util.List;
 
 import xyz.dudedaya.myfriends.DataHelper.User;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class FriendsFragment extends Fragment {
 
 
     public FriendsFragment() {
         // Required empty public constructor
     }
-
-
 
 
     @Override
