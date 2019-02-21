@@ -20,4 +20,9 @@ public class Car {
     public void drive() {
         Log.d(TAG, "driving...");
     }
+
+    @Inject
+    public void enableRemote(Remote remote) {
+        remote.setListener(this);
+    }
 }
