@@ -21,6 +21,10 @@ public class Car {
         Log.d(TAG, "driving...");
     }
 
+    //Method injection example.
+    //If constructor is injected fields and methods injected automatically in that order.
+    //Constructor -> fields -> methods
+    //In other case we have to call injection from a component.
     @Inject
     public void enableRemote(Remote remote) {
         remote.setListener(this);
