@@ -17,7 +17,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Using dependency injection to instantiate a new Car object.
-        CarComponent carComponent = DaggerCarComponent.create();
+        //CarComponent carComponent = DaggerCarComponent.create(); //changed to show Injection of value at runtime
+        CarComponent carComponent = DaggerCarComponent.builder()
+                .dieselEngineModule(new DieselEngineModule(100))
+                .build();
         car = carComponent.getCar();
         car.drive();
     }

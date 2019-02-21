@@ -1,15 +1,20 @@
 package xyz.dudedaya.daggertestapp;
 
-import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 
 @Module
-public abstract class DieselEngineModule {
+public class DieselEngineModule {
+    //We can also inject values at runtime.
+    private int horsePower;
 
-    //We use Binds and abstract classes for better performance and less code,
-    //We pass the DieselEngine directly here because we use @Inject annotation on its constructor.
-    //Binds should always be used when we bind an implementation with an interface.
-    @Binds
-    abstract Engine bindEngine(DieselEngine engine);
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Provides
+    Engine provideEngine() {
+        return new DieselEngine(horsePower);
+    }
 
 }

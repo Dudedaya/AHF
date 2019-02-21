@@ -2,7 +2,7 @@ package xyz.dudedaya.daggertestapp;
 
 import dagger.Component;
 
-@Component (modules = {WheelsModule.class, PetrolEngineModule.class})
+@Component (modules = {WheelsModule.class, DieselEngineModule.class})
 //We use wheels module because we get them from the third-party lib
 //PetrolEngineModule is here because we can't instantiate an Engine interface
 //in a car class.
