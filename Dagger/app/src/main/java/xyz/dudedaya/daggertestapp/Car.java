@@ -8,16 +8,27 @@ public class Car {
     private static final String TAG = "Car";
 
     private Engine engine;
-    private Wheels wheels;
+    //private Wheels wheels; changed to inject to illustrate injecting fields.
+    @Inject Wheels wheels;
 
     //Constructor injection example.
     @Inject
-    public Car(Engine engine, Wheels wheels) {
+    public Car(Engine engine/*, Wheels wheels*/) {
         this.engine = engine;
-        this.wheels = wheels;
+        //this.wheels = wheels;
     }
 
     public void drive() {
+        engine.start();
         Log.d(TAG, "driving...");
+    }
+
+    //Method injection example.
+    //If constructor is injected fields and methods injected automatically in that order.
+    //Constructor -> fields -> methods
+    //In other case we have to call injection from a component.
+    @Inject
+    public void enableRemote(Remote remote) {
+        remote.setListener(this);
     }
 }
