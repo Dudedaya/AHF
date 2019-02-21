@@ -8,7 +8,7 @@ public class Bike {
     private static final String TAG = "Bike";
 
     @Inject Engine engine;
-    @Inject Wheels wheels;
+    //Wheels was removed for sake of simplicity
 
     @Inject
     public Bike() {
