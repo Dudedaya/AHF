@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsRecycler
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        CardView cardView = (CardView)LayoutInflater.from(viewGroup.getContext())
+        CardView cardView = (CardView) LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.friend_card, viewGroup, false);
         return new ViewHolder(cardView);
     }
@@ -48,7 +47,6 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsRecycler
             TextView statusTextView = cardView.findViewById(R.id.status);
             statusTextView.setText(friend.getStatus());
         }
-
     }
 
     @Override
@@ -62,16 +60,14 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsRecycler
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.cardView = (CardView)itemView;
+            this.cardView = (CardView) itemView;
         }
     }
-
-
 
     private class RetrievePhotoTask extends AsyncTask<String, Void, Bitmap> {
         ImageView imageView;
 
-        RetrievePhotoTask (ImageView imageView) {
+        RetrievePhotoTask(ImageView imageView) {
             this.imageView = imageView;
         }
 
@@ -87,7 +83,6 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsRecycler
                     urlConnection.disconnect();
                 }
             } catch (Exception e) {
-                Log.d("FriendsRecyclerAdapter","Error loading photo.");
                 e.printStackTrace();
             }
             return null;

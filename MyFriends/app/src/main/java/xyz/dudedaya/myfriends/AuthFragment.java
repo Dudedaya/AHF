@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AuthFragment extends Fragment {
 
     public interface AuthListener {
@@ -59,13 +54,11 @@ public class AuthFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d("AuthFragment", "page started: " + url);
                 super.onPageStarted(view, url, favicon);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                Log.d("AuthFragment", "page finished: " + url);
                 authListener.authLoaded();
                 if (url.contains("error")) {
                     authListener.authError();
@@ -77,7 +70,6 @@ public class AuthFragment extends Fragment {
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Log.d("AuthFragment", "error");
                 authListener.authError();
                 super.onReceivedError(view, request, error);
             }

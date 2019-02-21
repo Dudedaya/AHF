@@ -7,14 +7,11 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,13 +25,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
 
     private SharedPreferences sharedPreferences;
     private String token;
-    private MenuItem logoutMenuItem;
     private ProgressBar progressBar;
-    private Fragment fragment;
     private AppBarLayout appBarLayout;
     private DataHelper dataHelper;
     private LinearLayout appbarLinearLayout;
     private ImageView userImage;
+    private FloatingActionButton fab;
 
 
     @Override
@@ -50,25 +46,35 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
         progressBar = findViewById(R.id.progress_bar);
         appBarLayout = findViewById(R.id.appbar);
         appbarLinearLayout = findViewById(R.id.appbar_layout);
+        fab = findViewById(R.id.fab);
+        configureFab();
+
 
         // Load token data, check it and update UI accordingly
         sharedPreferences = getSharedPreferences("tokenData", Context.MODE_PRIVATE);
-        if (savedInstanceState == null) {
-            setUI(checkToken());
-        } else {
-            fragment = getSupportFragmentManager().getFragment(savedInstanceState, "fragment");
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, fragment);
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            ft.commit();
-        }
+        setUI(checkToken());
     }
 
+    private void configureFab() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetToken();
+                logout();
+                v.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setUI(checkToken());
+    }
 
     private boolean checkToken() {
         long currentTime = System.currentTimeMillis();
         token = sharedPreferences.getString("token", "");
-        Log.d("checkToken", token);
         long expirationDate = sharedPreferences.getLong("expirationDate", currentTime);
         // Return false if we don't have a token or the token is expired
         return (token.length() != 0 && expirationDate >= currentTime);
@@ -95,42 +101,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
             // Set Login fragment
             appBarLayout.setExpanded(false, false);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            LoginFragment loginFragment = new LoginFragment();
-            fragment = loginFragment;
-            ft.add(R.id.fragment_container, loginFragment);
-            ft.commit();
+            ft.replace(R.id.fragment_container, new LoginFragment());
+            ft.commitAllowingStateLoss();
         }
     }
 
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (fragment.isAdded()) {
-            getSupportFragmentManager().putFragment(outState, "fragment", fragment);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        logoutMenuItem = menu.findItem(R.id.action_logout);
-        logoutMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                resetToken();
-                logoutMenuItem.setVisible(false);
-                logout();
-                return true;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
 
     private void logout() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        fragment = new LoginFragment();
-        ft.replace(R.id.fragment_container, fragment);
+        ft.replace(R.id.fragment_container, new LoginFragment());
         ft.commit();
         appBarLayout.setExpanded(false, true);
         appbarLinearLayout.setVisibility(View.GONE);
@@ -141,9 +120,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
     @Override
     public void authButtonClicked() {
         showProgressBar();
-        fragment = new AuthFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, fragment);
+        ft.replace(R.id.fragment_container, new AuthFragment());
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
@@ -158,6 +136,18 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
         } else showErrorSnackbar();
     }
 
+    private void retrieveData() {
+        dataHelper = DataHelper.initInstance(token);
+        dataHelper.setListener(this);
+        dataHelper.loadData();
+    }
+
+    @Override
+    public void dataLoaded() {
+        setFriendsFragment();
+        showLogoutButton();
+    }
+
     @Override
     public void authError() {
         showErrorSnackbar();
@@ -169,22 +159,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
     }
 
     @Override
-    public void dataLoaded() {
-        Log.d("dataLoaded", "dataLoaded");
-        setFriendsFragment();
-        showLogoutButton();
-    }
-
-    @Override
     public void errorLoadingData() {
         showErrorSnackbar();
-    }
-
-    private void retrieveData() {
-        Log.d("retrieveData", "retrieveData");
-        dataHelper = DataHelper.initInstance(token);
-        dataHelper.setListener(this);
-        dataHelper.loadData();
     }
 
     private void showErrorSnackbar() {
@@ -197,16 +173,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
         });
         snackbar.show();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (fragment != null && fragment.isAdded()) {
-            ft.remove(fragment);
-            ft.commit();
-            getSupportFragmentManager().popBackStack();
-        } else {
-            fragment = new LoginFragment();
-            ft.replace(R.id.fragment_container, fragment);
-            ft.commit();
-        }
-
+        ft.replace(R.id.fragment_container, new LoginFragment());
+        ft.commit();
     }
 
     private void showProgressBar() {
@@ -218,14 +186,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
     }
 
     private void showLogoutButton() {
-        Log.d("showLogoutButton", "logoutShow");
-        logoutMenuItem.setVisible(true);
+        ((View) fab).setVisibility(View.VISIBLE);
     }
 
     private void setFriendsFragment() {
-        fragment = new FriendsFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, fragment);
+        ft.replace(R.id.fragment_container, new FriendsFragment());
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
         appBarLayout.setExpanded(true, true);
@@ -262,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Aut
                     urlConnection.disconnect();
                 }
             } catch (Exception e) {
-                Log.d("MA/RetrievePhotoTask","Error loading photo.");
                 e.printStackTrace();
             }
             return null;

@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <android.support.design.button.MaterialButton
-        android:id="@+id/auth_button"
-        style="@style/AuthButton"
-        android:layout_marginTop="30dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:text="@string/authorize" />
-
-</FrameLayout>
+<android.support.design.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/auth_button"
+    style="@style/AuthButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|top"
+    android:layout_marginTop="30dp"
+    android:text="@string/authorize" />

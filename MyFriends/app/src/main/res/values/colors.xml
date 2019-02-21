@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#597DA3</color>
     <color name="colorPrimaryDark">#45668E</color>
-    <color name="colorAccent">#a39a59</color>
+    <color name="colorAccent">#6b59a3</color>
     <color name="colorAuthButtonText">#FFFFFF</color>
 </resources>
