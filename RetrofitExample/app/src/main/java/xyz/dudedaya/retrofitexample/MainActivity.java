@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,18 +38,28 @@ public class MainActivity extends AppCompatActivity {
         //If we want GSON to include null fields:
 //        Gson gson = new GsonBuilder().serializeNulls().create();
 
+        //Adding logger to check how http connection was made
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/")
                 .addConverterFactory(GsonConverterFactory.create())
 //                .addConverterFactory(GsonConverterFactory.create(gson)) //pass the created gson object with .serializeNulls()
+                //adding logging
+                .client(okHttpClient)
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
 //        getPosts(userId, sort, order);
 //        getComments(postId);
 //        createPost();
-//        updatePost();
-        deletePost();
+        updatePost();
+//        deletePost();
 
     }
 
