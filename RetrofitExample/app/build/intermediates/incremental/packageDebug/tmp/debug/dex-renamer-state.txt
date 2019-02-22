@@ -1,0 +1,4 @@
+#Thu Feb 21 16:27:30 MSK 2019
+base.0=C\:\\Users\\st804330\\ASProjects\\AHF\\RetrofitExample\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
+path.0=classes.dex
+renamed.0=classes.dex
