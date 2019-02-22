@@ -4,6 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,17 +33,24 @@ public class MainActivity extends AppCompatActivity {
 
         textViewResult = findViewById(R.id.text_view_result);
 
+        //If we want GSON to include null fields:
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/")
                 .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create(gson)) //pass the created gson object with .serializeNulls()
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
 //        getPosts(userId, sort, order);
 //        getComments(postId);
-        createPost();
+//        createPost();
+//        updatePost();
+        deletePost();
 
     }
+
 
 
     private void getPosts(Integer userIds[], String sort, String order) {
@@ -162,6 +172,64 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
                 textViewResult.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void updatePost() {
+        Post post = new Post(12, null, "New text");
+
+        Call<Post> call = jsonPlaceHolderApi.putPost(5, post);
+        //The putPost method will replace the Post object on server completely, so we will have
+        // a null as a title there, since gson is ignoring the null fields by default.
+        //Call<Post> call = jsonPlaceHolderApi.patchPost(5, post);
+        //A patchPost method will only update the passed fields, so the original title still be there.
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()) {
+                    String responseCode = "Code " + response.code();
+                    textViewResult.setText(responseCode);
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                StringBuilder content = new StringBuilder();
+                content.append("Code: ").append(response.code()).append("\n");
+                content.append("ID: ").append(postResponse.getId()).append("\n");
+                content.append("User ID: ").append(postResponse.getUserId()).append("\n");
+                content.append("Title : ").append(postResponse.getTitle()).append("\n");
+                content.append("Text : ").append(postResponse.getText()).append("\n\n");
+                textViewResult.append(content);
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+
+            }
+        });
+
+    }
+
+    private void deletePost() {
+        Call<Void> call = jsonPlaceHolderApi.deletePost(5);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                String responseCode = "Code :" + response.code();
+                textViewResult.setText(responseCode);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+
             }
         });
     }

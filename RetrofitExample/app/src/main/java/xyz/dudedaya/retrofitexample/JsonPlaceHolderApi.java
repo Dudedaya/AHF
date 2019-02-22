@@ -5,11 +5,14 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -31,7 +34,7 @@ public interface JsonPlaceHolderApi {
                                                                         // as a Map<String, String>
 
     @GET("posts/{id}/comments")
-    Call<List<Comment>> getComments(@Path("id") int postId);
+    Call<List<Comment>> getComments(@Path("id") int postId); //With @Path we can change a part of the endpoint.
 
     @GET()
     Call<List<Comment>> getComments(@Url String url); //Also we can pass the whole url string.
@@ -51,4 +54,13 @@ public interface JsonPlaceHolderApi {
     @FormUrlEncoded
     @POST("posts")
     Call<Post> createPost(@FieldMap Map<String, String> fields); //Another way to put parameters in Url-encoded string.
+
+    @PUT("posts/{id}")
+    Call<Post> putPost(@Path("id") int id, @Body Post post);  //Put completely replace the Post object on the server.
+
+    @PATCH("posts/{id}")
+    Call<Post> patchPost(@Path("id") int id, @Body Post post); //Patch will update the fields of a Post object on the server.
+
+    @DELETE("posts/{id}")
+    Call<Void> deletePost(@Path("id") int id); //Will delete an object
 }
