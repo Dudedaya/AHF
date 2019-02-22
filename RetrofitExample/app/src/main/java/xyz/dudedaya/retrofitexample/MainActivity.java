@@ -36,10 +36,12 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        getPosts(userId, sort, order);
-        //getComments(postId);
+//        getPosts(userId, sort, order);
+//        getComments(postId);
+        createPost();
 
     }
+
 
     private void getPosts(Integer userIds[], String sort, String order) {
 //        To pass unspecified parameters we using Map<String, String>
@@ -119,5 +121,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void createPost() {
+        //To use Url-encoded method we pass each field individually
+        //Call<Post> call = jsonPlaceHolderApi.createPost(23, "New title", "New text");
+        // ----or----
+        //Map<String, String> fields new HashMap<>();
+        //fields.put("userId", "25");
+        //fields.put("title", "New title");
+        //We don't put the "body" in, so we get null there.
+        //Call<Post> call = jsonPlaceHolderApi.createPost(fields);
+
+
+        Post post = new Post(23, "New title", "New text"); //for example. In real case use user values here.
+
+        Call<Post> call = jsonPlaceHolderApi.createPost(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()) {
+                    String responseCode = "Code " + response.code();
+                    textViewResult.setText(responseCode);
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                StringBuilder content = new StringBuilder();
+                content.append("Code: ").append(response.code()).append("\n");
+                content.append("ID: ").append(postResponse.getId()).append("\n");
+                content.append("User ID: ").append(postResponse.getUserId()).append("\n");
+                content.append("Title : ").append(postResponse.getTitle()).append("\n");
+                content.append("Text : ").append(postResponse.getText()).append("\n\n");
+                textViewResult.append(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
     }
 }
