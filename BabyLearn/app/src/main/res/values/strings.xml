@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Baby Learn</string>
+
+    <string name="nav_main">Home Page</string>
+    <string name="nav_colors">Learn Colors</string>
+    <string name="nav_shapes">Learn Shapes</string>
+    <string name="nav_colors_and_shapes">Learn Colors and Shapes</string>
+    <string name="nav_extra">Extras</string>
+    <string name="nav_stats">My Results</string>
+    <string name="nav_change_user">Change User</string>
+
+    <string name="nav_drawer_open">Open</string>
+    <string name="nav_drawer_close">Close</string>
+
+    <string name="color_red">RED</string>
+    <string name="color_green">GREEN</string>
+    <string name="color_yellow">YELLOW</string>
+    <string name="color_orange">ORANGE</string>
+    <string name="color_blue">BLUE</string>
+    <string name="color_pink">PINK</string>
+    <string name="color_grey">GREY</string>
+    <string name="color_brown">BROWN</string>
+    <string name="color_violet">VIOLET</string>
+    <string name="color_black">BLACK</string>
+
+    <string name="shape_circle">CIRCLE</string>
+    <string name="shape_oval">OVAL</string>
+    <string name="shape_triangle">TRIANGLE</string>
+    <string name="shape_square">SQUARE</string>
+    <string name="shape_rectangle">RECTANGLE</string>
+    <string name="shape_diamond">DIAMOND</string>
+    <string name="shape_pentagon">PENTAGON</string>
+    <string name="shape_star">STAR</string>
+    <string name="shape_crescent">CRESCENT</string>
+    <string name="shape_heart">HEART</string>
+
+    <string name="error">Error :(</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

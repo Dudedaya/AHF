@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="@string/nav_main"
+            android:checked="true" />
+        <item
+            android:id="@+id/nav_colors"
+            android:title="@string/nav_colors" />
+        <item
+            android:id="@+id/nav_shapes"
+            android:title="@string/nav_shapes" />
+        <item
+            android:id="@+id/nav_colors_and_shapes"
+            android:title="@string/nav_colors_and_shapes" />
+    </group>
+
+    <item android:title="@string/nav_extra">
+
+        <menu>
+
+            <item
+                android:id="@+id/nav_stats"
+                android:title="@string/nav_stats" />
+            <item
+                android:id="@+id/nav_change_user"
+                android:title="@string/nav_change_user" />
+
+        </menu>
+
+    </item>
+
+</menu>
